@@ -2,11 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "bacumen-dev",
+      "name": "hr-concierge",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 3500,
-      "cwd": "/Users/kyle/Library/Application Support/Claude/local-agent-mode-sessions/8cf2e6e0-c32b-445a-8a59-9119cb5ac0fd/3f1dd73e-8638-4f94-81e5-ea6cef0ef466/local_6abcd11d-db5d-4260-aa5c-d587e8e7e35a/outputs/Bacumen"
+      "port": 5173
     }
   ]
 }

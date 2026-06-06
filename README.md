@@ -1,41 +1,8 @@
-# Bacumen.ai — marketing site
+# HR Concierge — demo
 
-Next.js 16 / React 19 / Tailwind v4 marketing site for **Bacumen.ai**, built from the
-spec in `Bacumen_Website_Brief_for_ClaudeCode.md`.
-
-## What's built
-
-- **IA & pages** (all routes in brief §3):
-  - `/` — Home with Cohere-North-style **LiveArtifactPanel** in the hero that
-    cycles through the 4 Skills' output artifacts.
-  - `/platform` — Runtime overview, 6 module cards, comparison, trust layer.
-  - `/skills` — 4-card grid + a single **ComingSoonPanel**.
-  - `/skills/[slug]` — Full Skill detail template. Centerpiece is the
-    `SkillWorkflowSection` that pairs a vertical **WorkflowVisualizer** (the
-    process) with a **LiveArtifactPanel** (the output the agent produces).
-  - `/integrations` — Filterable grid over ~30 integrations.
-  - `/pricing` — 3 tiers, every CTA opens the demo modal.
-  - `/customers` — 3 case-study cards.
-  - `/customers/[slug]` — Long-form case study template.
-  - `/about` — Mission, founder bios (verbatim from brief §7.2), hiring.
-  - `/demo` — Standalone request-demo form, supports `?skill=kyc` preselect.
-  - `/api/demo-request` — POST stub (validates with zod, `console.log`, returns 200;
-    forwards to `DEMO_WEBHOOK_URL` if set).
-  - `/dev/workflow` — Dev-only QA page that renders all 4 Skill workflows +
-    artifacts stacked. Returns 404 in production.
-- **Design system** (tokens in `app/globals.css` via Tailwind v4 `@theme`):
-  navy / teal / ink / muted / cream, typography scale (`.text-display-xl` …),
-  unified motion clock `--t-1..t-5`, dark/light section utilities, hairline grid
-  + film-grain overlays, teal caret blink, active-node soft pulse.
-- **Centerpiece components:**
-  - `components/live-artifact-panel.tsx` — Cohere-North-style agent-writes-an-artifact
-    visual. Variable-speed typewriter, cursor, staggered table rows, corner brackets,
-    scan-line overlay. Respects `prefers-reduced-motion`.
-  - `components/workflow-visualizer.tsx` — node-flow with pulsing active ring,
-    gradient progress path, click-to-open detail sheet, `IntersectionObserver`
-    autoplay, hover-to-pause.
-- **SEO/assets:** `app/sitemap.ts`, `app/robots.ts`, `app/opengraph-image.tsx`,
-  `app/icon.tsx`.
+Agentic-AI HR demo for a global multinational. CXO audience. Built on the
+DSM-Firmenich design system (mint #C3E6E1, DM Sans, pill CTAs, sentence case)
+with an extended set of AI-motion primitives.
 
 ## Run locally
 
@@ -44,110 +11,111 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000`. Hit `/dev/workflow` to see all 4 Skill animations
-stacked for QA.
+Open <http://localhost:5173>. The demo starts on the HR Dashboard.
 
-## Scripts
+## Stack
 
-- `npm run dev` — start Next dev server
-- `npm run build` — production build (Turbopack)
-- `npm start` — serve the production build
-- `npm run typecheck` — strict TS check, no emit
-- `npm run lint` — eslint
+- Vite 8 + React 19 + TypeScript
+- Tailwind v4 with the DSM-F token foundation (`src/index.css`)
+- `lucide-react` icons, `clsx` + `tailwind-merge` for class composition
+- No backend, no router — view state is a discriminated union in
+  `src/state.tsx` (same pattern as the Predictive-Risk-Agent2 reference)
 
-## Environment
+## Demo script
 
-Copy `.env.example` → `.env.local`:
+The demo follows four flows the client lock-in'd on. Each flow is reachable
+from the HR Dashboard. Persona switching uses a logout-and-back-in ceremony
+on purpose so the chrome reset has narrative weight.
 
-- `NEXT_PUBLIC_SITE_URL` — canonical site URL (defaults to `https://bacumen.ai`)
-- `DEMO_WEBHOOK_URL` — optional; when set, the API route also POSTs the demo
-  payload here (Slack / HubSpot / webhook.site, etc.)
+### Flow 1 — UC2 Compliance Radar ★ (the hero)
 
-## Add a new Skill
+1. Dashboard → click **"German workweek update"** (top case row, or the
+   **"Open workspace"** CTA on the first pending decision).
+2. Workspace auto-advances through 4 agent steps (detect law change →
+   compute impact → draft documents → human review).
+3. Pause at step 4: decision card spring-in with 4 metrics, 90-day rollout,
+   and 4 document chips (Source law / Handbook redline / Employee
+   announcement DE+EN / Works council notice).
+4. Click any document chip to preview the artifact, then back.
+5. Click **"Approve and execute"**: auto-actions tick through one-by-one,
+   activity log streams, decision card becomes "Roll-out under way".
 
-Edit `lib/skills.ts`:
+### Flow 2 — UC1 Offboarding
 
-1. Add the new slug to the `SkillSlug` union.
-2. Append a new entry to the `skills` array with the full shape (`steps`,
-   `bigNumbers`, `integrations`, `before`, `after`, `policyYamlPreview`,
-   `artifact`).
-3. In `components/skill-icon.tsx`, add the slug → Lucide icon mapping.
-4. The Skill detail page (`app/skills/[slug]/page.tsx`) picks it up via
-   `generateStaticParams`.
+1. Dashboard → click **"Senior R&D · Heidelberg offboarding"**.
+2. Same workspace shell. Decision card has three sub-blocks: knowledge
+   transfer plan, 23 system accesses (a grid that staggers in), exit
+   package with prorated Christmas bonus.
+3. Termination letter PDF available from the "Letter" field.
 
-## Add a new integration
+### Flow 3 — UC3 Compensation
 
-Edit `lib/integrations.ts`:
+1. Dashboard → click **"Senior Engineer retention case"**.
+2. Decision card shows three scenarios (Conservative · Mid · Retention).
+3. **Click any scenario** — the internal-equity bar chart below updates:
+   Marcus's bar morphs to the new salary, affected peers turn rose when
+   the Retention option flags them.
+4. Confirm → Comp deliverables (3-up: salary update form / manager talking
+   points / Finance rationale).
 
-1. Add an entry to the `integrations` array (`name`, `slug`, `category`,
-   `usedBy`, `status`).
-2. If it's a new category, add it to `integrationCategories` too.
-3. The filter UI on `/integrations` picks it up automatically.
+### Flow 4 — UC4 Employee self-service
 
-## Deploy
+1. From Dashboard → bottom of sidebar → **"Switch role · Sign out"**.
+2. Ceremony: black fade → login form auto-types `employee@company.com` →
+   button "presses itself" → Employee Landing.
+3. The Ultimatix-style tile grid has an active **"Open chat →"** mint
+   banner up top (the proactive AI nudge).
+4. Click into the chat. The scripted conversation runs through letter
+   request → field confirmation → PDF preview → proactive wellness nudge →
+   coverage-plan PDF.
 
-Push to GitHub, connect to Vercel, set the env vars above, attach
-`bacumen.ai` + `www` redirect. That's it. The sitemap/robots routes are
-generated at build via Next's built-in metadata routes.
+## Files
 
-## Decisions
+```
+src/
+  state.tsx                  view-state machine + context
+  index.css                  DSM-F tokens + AI motion contracts
+  data/                      cases, scenarios, UC3 peers, etc.
+  components/
+    ds/                      DSM-Firmenich design-system components (copied
+                             from /design-system, "use client" stripped)
+    ai/                      AI-motion primitives:
+                               AIDot · StreamingText · SpringIn
+                               CountUp · StaggerList
+    blocks/                  dashboard building blocks
+    workspace/               timeline · alert · decision cards (UC1/2/3) ·
+                             auto-actions · activity log
+    docs/                    8 document preview pages + DocChrome shell
+    layout/Sidebar.tsx       grouped HRBP sidebar with agents card + footer
+  views/
+    Dashboard.tsx
+    ComplianceRadar.tsx
+    WorkspaceUC1.tsx · WorkspaceUC2.tsx · WorkspaceUC3.tsx
+    DocPreview.tsx           routes by DocId
+    Logout.tsx · EmployeeLanding.tsx · EmployeeChat.tsx
+```
 
-Judgment calls made during the build that aren't spelled out in the brief:
+## Design system
 
-1. **npm instead of pnpm.** The brief prescribes pnpm; the local environment
-   has no pnpm binary. Scripts and docs use `npm`. Switch by renaming the lockfile
-   and rerunning `pnpm install`.
-2. **No Storybook.** Brief allowed fallback to `/dev/workflow` — taken.
-3. **Next.js 16 + React 19**, not 15 as the brief said — current
-   `create-next-app` output. Turbopack is enabled.
-4. **Tailwind v4 with `@theme`** instead of `tailwind.config.ts` — matches the
-   brief's requested version. All design tokens live in `app/globals.css`.
-5. **Repo lives at the root of this directory**, not in a nested
-   `bacumen-website/` folder as the brief's §8 tree suggests.
-6. **Inter Display fallback.** Brief requires local Inter Display. Without the
-   `.woff2`, the display scale is aliased to Inter 700 with a tuned letter-spacing
-   (-0.02em at display-xl) — noticeably less polished than real Inter Display.
-   Drop the file into `app/fonts/InterDisplay.woff2` and swap the `next/font/google`
-   Inter-as-Display registration in `app/layout.tsx` for `next/font/local` to fix.
-7. **Added `Instrument Serif` font variable** as an optional display accent for
-   future editorial flourishes; not used by any component yet but loaded.
-8. **Case studies are TSX, not MDX.** Brief's §8 aspirational MDX system
-   replaced with typed data in `lib/cases.ts`. Upgrade by adding `@next/mdx`
-   if longer-form content is needed later.
-9. **Skill roadmap** (brief §4.3 expansion): chose the minimal approach after
-   user direction — single `ComingSoonPanel` at the bottom of `/skills`, no
-   per-category roadmap or per-stub pages. Keeps the site tight.
-10. **Signature component pair.** Brief had only `WorkflowVisualizer`. Added
-    `LiveArtifactPanel` (Cohere North reference) and compose both in
-    `SkillWorkflowSection`. Process on the left, output on the right.
-11. **Unified motion clock** — `--t-1..t-5` CSS variables + two named eases
-    (`--ease-entrance`, `--ease-spring-ish`). Every timing in the codebase
-    should pick from this scale.
-12. **Demo form:** zod validation + client-side free-email-domain rejection
-    (gmail/yahoo/outlook/hotmail/etc.). Free-email submission is blocked at
-    the form level with an inline error, not just at the API.
-13. **`data-demo-trigger` delegation.** Any element in the tree with that
-    attribute opens the modal via a document-level click listener in
-    `DemoModalProvider`. Supports `data-demo-skill=kyc` to preselect and
-    `data-demo-source=...` for analytics tagging.
-14. **Placeholder customer wordmarks** on the trust row — the brief defers
-    the real customer decision. Replace in `components/trust-row.tsx`.
-15. **`@vercel/analytics` active**, Plausible placeholder `<script>` in
-    `app/layout.tsx` left commented out.
+All DSM-F UI components were copied verbatim from
+`/Users/kyle/Desktop/dsm-firmenich/design-system/src/components/`
+(only 3 `"use client"` directives removed for Vite). Tokens come from the
+DS's `globals.css` and live in `src/index.css` with three extra AI-motion
+contracts on top:
 
-## Accessibility
+- `--motion-duration-stream: 80ms` — per-row stagger on activity logs
+- `--motion-duration-spring: 420ms` — decision-card scale-in
+- `--motion-duration-pulse: 1800ms` — agent "thinking" dot
 
-- Skip link at the top of every page (`components/skip-link.tsx`).
-- Every interactive element has a visible teal focus ring via
-  `:focus-visible` in `app/globals.css`.
-- All animations honor `prefers-reduced-motion: reduce` — the override in
-  globals.css snaps durations to 0.001ms, and the LiveArtifactPanel /
-  WorkflowVisualizer also check the media query directly and render their
-  final state instantly.
+`tailwind-merge` + `cn()` follow the same composition pattern the DS uses.
 
-## Outstanding / nice-to-have
+## Standing rules
 
-- Real customer logos on `/` trust row.
-- Real Inter Display `.woff2` in `app/fonts/`.
-- Case-study MDX pipeline if the copy grows.
-- Per-locale strings if/when i18n lands (brief v1 is English-only).
+1. **No HR or ops jargon** in user-visible copy. Use plain professional
+   words: "HR record", not "HRIS"; "market range", not "salary band";
+   "remove access", not "revoke".
+2. **No big-then-small text stacks.** One eyebrow per card max. Body
+   text ≥ 14 px. Avoid stacking a 36 px metric on top of a 12 px tertiary
+   sub-caption.
+3. **CXO audience.** Editorial whitespace, story-first, no system-trace
+   detail surfaced by default.
