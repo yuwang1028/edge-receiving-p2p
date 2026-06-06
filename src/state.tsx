@@ -134,7 +134,10 @@ const Ctx = React.createContext<(AppState & AppActions) | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = React.useState<AppState>({
-    view: { kind: "login" },
+    // Demo lands directly on the cockpit (login is bypassed on first load;
+    // the state is already initialised as if signed in). Sign out still
+    // returns to the login screen.
+    view: { kind: "cockpit" },
     history: [],
     flowProgress: freshProgress(),
     agentOutputs: freshOutputs(),
