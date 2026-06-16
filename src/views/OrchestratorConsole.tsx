@@ -25,8 +25,10 @@ type Metric = { label: string; value: string; sub: string };
 const metrics: Metric[] = [
   { label: "Touchless rate", value: "82%", sub: "target 85%" },
   { label: "PR → PO median", value: "4.2h", sub: "was 11 days" },
+  { label: "Delivery compliance", value: "88%", sub: "up from 71%" },
+  { label: "Negotiation savings", value: "6.8%", sub: "vs first quotes" },
+  { label: "Process efficiency", value: "+58%", sub: "vs pre-agent baseline" },
   { label: "Exception rate", value: "6.1%", sub: "−2 pts MoM" },
-  { label: "Agents online", value: "7 / 7", sub: "1 needs a look" },
 ];
 
 const OUT_PILL: Record<AgentOutputStatus, { label: string; kind: "active" | "critical" | "neutral" }> = {
@@ -126,7 +128,7 @@ function OrchestratorHero() {
 
 function MetricsStrip() {
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <section className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
       {metrics.map((m) => (
         <div key={m.label} className="bg-white border border-divider rounded-md px-4 py-3">
           <div className="text-[10px] tracking-[0.05em] uppercase text-mute font-medium">{m.label}</div>

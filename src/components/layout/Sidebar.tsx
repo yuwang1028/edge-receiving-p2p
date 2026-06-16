@@ -66,17 +66,23 @@ export function Sidebar() {
 
   return (
     <aside className="flex flex-col w-[240px] shrink-0 h-screen bg-white border-r border-divider sticky top-0">
-      {/* Brand */}
+      {/* Brand — links back to the COSmos platform that launches this workflow */}
       <div className="px-5 pt-6 pb-2">
-        <div className="flex items-center gap-2.5">
+        <a
+          href="https://bacumen-cosmos-platform.vercel.app"
+          target="_blank"
+          rel="noreferrer"
+          title="Back to the COSmos platform"
+          className="group flex items-center gap-2.5 -mx-1 px-1 py-1 rounded-lg hover:bg-surface-mint/50 transition-colors"
+        >
           <div className="w-7 h-7 rounded-lg bg-surface-deep flex items-center justify-center">
             <span className="text-ink-inverse text-[15px] leading-none font-bold">✦</span>
           </div>
           <div className="leading-tight">
             <div className="text-[14px] font-bold text-ink">Procure-to-pay</div>
-            <div className="text-[12px] text-mute">Agentic procurement</div>
+            <div className="text-[12px] text-mute group-hover:text-surface-deep transition-colors">Agentic procurement</div>
           </div>
-        </div>
+        </a>
       </div>
 
       {/* Sections */}

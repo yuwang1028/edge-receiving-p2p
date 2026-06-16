@@ -74,7 +74,7 @@ export const pipelineStages: PipelineStage[] = [
   { n: 6, name: "Payment ready", agent: null, volume: "188 scheduled", detail: "$4.6M to Treasury", status: "idle" },
 ];
 
-export const pipelineFooter = "Requisition-to-order median 4.2 h · 82% touchless end-to-end";
+export const pipelineFooter = "Requisition-to-order median 4.2 h · 82% touchless · on-time delivery 88%";
 
 export type PendingDecision = {
   id: string;
