@@ -121,8 +121,41 @@ export type ExtractStage = {
   reasoning: string;
   /** The form-box section title (a section of the produced doc). */
   title: string;
-  /** Auto-filled, editable fields extracted from the source. */
-  fields: { label: string; value: string }[];
+  /**
+   * A short AI rationale written out (typed) above the fields — used on the
+   * recommendation stage so the agent explains its pick in prose, not just
+   * form cells. Omit on the plain extraction stages.
+   */
+  narrative?: string;
+  /**
+   * Auto-filled, editable fields extracted from the source. A field with
+   * `options` renders as a dropdown (e.g. payment terms — Net 30 / 60 / 90) so
+   * the reviewer can override the agent's pick; a field with `type: "date"`
+   * renders a date input with a native calendar picker; otherwise text.
+   * Omit on match-grid stages.
+   */
+  fields?: { label: string; value: string; options?: string[]; type?: "date" }[];
+  /**
+   * Renders the cumulative four-way-match grid instead of a form box. The grid
+   * persists across the match stages: each stage reveals one more column
+   * (`reveal` is the cumulative set), so the checked values from the previous
+   * file stay on screen and the next file's column fills in beside them — a
+   * live side-by-side comparison. Same model is shared by every match stage.
+   */
+  matchGrid?: MatchGrid;
+};
+
+/** One cell of the four-way-match grid — a value and whether it agrees. */
+export type MatchCell = { value: string; ok: boolean };
+
+/** The shared four-way-match comparison grid (contract · PO · GR · invoice). */
+export type MatchGrid = {
+  columns: { key: string; label: string }[];
+  rows: { dimension: string; cells: Record<string, MatchCell> }[];
+  /** Cumulative columns visible by the end of THIS stage (left → right fill). */
+  reveal: string[];
+  /** Summary line shown under the grid once every column is in. */
+  verdict?: string;
 };
 
 export type RunStep = {
@@ -171,7 +204,7 @@ const intakeStep: RunStep = {
       body: (
         <EmailDoc
           from="Dale Whitfield"
-          fromAddr="dwhitfield@ipaper.com"
+          fromAddr="dwhitfield@northgatepaper.com"
           to="Procurement Intake"
           sent="2026-06-03 · 09:01"
           subject="No.2 double-backer belt — wear beyond limit"
@@ -230,7 +263,7 @@ const intakeStep: RunStep = {
         body: (
           <EmailDoc
             from="Dale Whitfield"
-            fromAddr="dwhitfield@ipaper.com"
+            fromAddr="dwhitfield@northgatepaper.com"
             to="Procurement Intake"
             sent="2026-06-03 · 09:14"
             subject="RE: PR-48201 raised"
@@ -255,7 +288,7 @@ const intakeStep: RunStep = {
         { label: "Material", value: "88-DBX" },
         { label: "Short text", value: "Belt, double-backer — Corrugator No.2" },
         { label: "Quantity", value: "1 EA" },
-        { label: "Delivery date", value: "2026-06-10" },
+        { label: "Delivery date", value: "2026-06-10", type: "date" },
         { label: "Plant", value: "M042 · Containerboard mill" },
         { label: "Requisitioner", value: "R. Alvarez · Reliability" },
       ],
@@ -265,7 +298,7 @@ const intakeStep: RunStep = {
       reasoning: "Checking the spending policy — on-contract, under the $50k MRO ceiling",
       title: "Release strategy",
       fields: [
-        { label: "Purchasing org", value: "IP01 · IP North America" },
+        { label: "Purchasing org", value: "NG01 · Northgate North America" },
         { label: "Purchasing group", value: "P12 · MRO & Spares" },
         { label: "Release strategy", value: "MRO1 — auto-released · under the L3 limit" },
         { label: "Policy", value: "POL-MRO-04 · maintenance-spend" },
@@ -341,7 +374,7 @@ const sourcingStep: RunStep = {
     to: "BeltPro · Heartland Rubber · Midwest Belting",
     subject: "RFQ-6600-2241 — Belt, double-backer 88-DBX (1 EA)",
     lines: [
-      "Please quote your best delivered price and lead time for 1 EA of material 88-DBX — double-backer belt for Corrugator No.2, ship-to International Paper M042.",
+      "Please quote your best delivered price and lead time for 1 EA of material 88-DBX — double-backer belt for Corrugator No.2, ship-to Northgate Paper M042.",
       "Evaluation is on delivered cost, lead time and quality/OTIF. Net 30 terms. Please respond by end of day.",
       "Reference RFQ-6600-2241 in your reply.",
     ],
@@ -468,7 +501,7 @@ const poStep: RunStep = {
   email: {
     cta: "Transmit the PO to BeltPro",
     to: "BeltPro Industrial · orders@beltpro.com",
-    subject: "PO-77310 issued — 1 EA 88-DBX to International Paper M042",
+    subject: "PO-77310 issued — 1 EA 88-DBX to Northgate Paper M042",
     lines: [
       "Issuing PO-77310 against framework 4600001207 · item 10 — 1 EA of 88-DBX at $48,200.00 net, FCA Memphis DC, Net 30.",
       "Requested delivery 2026-06-10 to the Containerboard mill (M042). Please acknowledge and confirm the ship date.",
@@ -513,8 +546,8 @@ const poStep: RunStep = {
       title: "Header & terms",
       fields: [
         { label: "Vendor", value: "BeltPro Industrial · 100482" },
-        { label: "Company code", value: "1000 · International Paper" },
-        { label: "Payment terms", value: "NT30 · Net 30 days" },
+        { label: "Company code", value: "1000 · Northgate Paper" },
+        { label: "Payment terms", value: "NT30 · Net 30 days", options: ["NT30 · Net 30 days", "NT45 · Net 45 days", "NT60 · Net 60 days", "NT90 · Net 90 days"] },
         { label: "Incoterms", value: "FCA · Memphis DC" },
         { label: "Reference agreement", value: "4600001207 · item 10" },
         { label: "Tax code", value: "U1 · self-assessed use tax" },
@@ -550,7 +583,7 @@ const poStep: RunStep = {
         { label: "G/L account", value: "510000 · Repairs & maintenance" },
         { label: "Cost center", value: "0000041702 · Corrugating No.2" },
         { label: "Budget after", value: "Headroom available" },
-        { label: "Delivery date", value: "2026-06-10" },
+        { label: "Delivery date", value: "2026-06-10", type: "date" },
       ],
     },
   ],
@@ -558,19 +591,80 @@ const poStep: RunStep = {
 
 /* ── Step 4 · Invoice — INV-BPI-5567 ─────────────────────────────────────── */
 
+/**
+ * The four-way-match comparison grid the Invoice agent builds up as it reads
+ * each file. Columns fill left → right (invoice seeded, then PO, then GR, then
+ * contract); a row's verdict tick lights once every column that carries the
+ * dimension agrees. "—" means the dimension doesn't apply to that document.
+ */
+const beltMatchColumns = [
+  { key: "invoice", label: "Invoice" },
+  { key: "po", label: "PO" },
+  { key: "gr", label: "GR" },
+  { key: "contract", label: "Contract" },
+];
+const beltMatchRows = [
+  {
+    dimension: "Unit price (USD)",
+    cells: {
+      invoice: { value: "48,200.00", ok: true },
+      po: { value: "48,200.00", ok: true },
+      gr: { value: "—", ok: false },
+      contract: { value: "48,200.00", ok: true },
+    },
+  },
+  {
+    dimension: "Quantity (EA)",
+    cells: {
+      invoice: { value: "1", ok: true },
+      po: { value: "1", ok: true },
+      gr: { value: "1", ok: true },
+      contract: { value: "1", ok: true },
+    },
+  },
+  {
+    dimension: "Net value (USD)",
+    cells: {
+      invoice: { value: "48,200.00", ok: true },
+      po: { value: "48,200.00", ok: true },
+      gr: { value: "48,200.00", ok: true },
+      contract: { value: "48,200.00", ok: true },
+    },
+  },
+  {
+    dimension: "Tax code",
+    cells: {
+      invoice: { value: "U1", ok: true },
+      po: { value: "U1", ok: true },
+      gr: { value: "—", ok: false },
+      contract: { value: "U1", ok: true },
+    },
+  },
+  {
+    dimension: "Payment terms",
+    cells: {
+      invoice: { value: "Net 30", ok: true },
+      po: { value: "Net 30", ok: true },
+      gr: { value: "—", ok: false },
+      contract: { value: "Net 30", ok: true },
+    },
+  },
+];
+
 const invoiceStep: RunStep = {
   id: "invoice",
   n: 4,
-  title: "Invoice match & release",
-  sub: "Four-way matches and releases to AP",
+  title: "Invoice — match, post & pay",
+  sub: "Four-way matches, posts the ledger, schedules payment",
   reasoning: [
     "Extracting invoice BPI-5567 — vendor, amount, terms, tax",
     "Running the four-way match — contract ↔ PO ↔ goods receipt ↔ invoice",
     "Checking price and quantity — $48,200 · 1 EA · all agree",
     "Scoring fraud — 0.02, low",
-    "Posting to SAP and releasing to AP — balance $0.00",
+    "Posting in MIRO — clearing GR/IR, booking the $48,200 AP liability",
+    "Applying the contract terms — Net 30, payment scheduled for 2026-07-09",
   ],
-  docLabel: "INV-BPI-5567 · Four-way match",
+  docLabel: "INV-BPI-5567 · Match · post · pay",
   document: <InvoiceMatch />,
   sources: [
     {
@@ -642,7 +736,71 @@ const invoiceStep: RunStep = {
     },
   },
   recommendation:
-    "Four-way match clean, $0 variance, fraud score 0.02, under the threshold. Auto-posted and released to AP.",
+    "Four-way match clean, $0 variance, fraud score 0.02, under the threshold. Auto-posted in MIRO — GR/IR cleared, AP booked — and scheduled for payment on the contract's Net 30 terms (due 2026-07-09).",
+  stages: [
+    {
+      sourceId: "invoice-pdf",
+      reasoning: "Reading the supplier invoice received by email — BPI-5567",
+      title: "Invoice — extracted from email",
+      fields: [
+        { label: "Vendor", value: "100482 · BeltPro Industrial" },
+        { label: "Invoice reference", value: "BPI-5567" },
+        { label: "Invoice date", value: "2026-06-09", type: "date" },
+        { label: "Gross amount", value: "USD 48,200.00" },
+        { label: "Tax (U1)", value: "USD 0.00" },
+        { label: "Stated terms", value: "Net 30", options: ["Net 30", "Net 45", "Net 60", "Net 90"] },
+      ],
+    },
+    {
+      sourceId: "po-match",
+      reasoning: "Matching against PO-77310 — price, quantity, net value",
+      title: "Four-way match — invoice vs PO",
+      matchGrid: { columns: beltMatchColumns, rows: beltMatchRows, reveal: ["invoice", "po"] },
+    },
+    {
+      sourceId: "gr-match",
+      reasoning: "Matching against the goods receipt GR-77310 — received quantity",
+      title: "Four-way match — adding the goods receipt",
+      matchGrid: { columns: beltMatchColumns, rows: beltMatchRows, reveal: ["invoice", "po", "gr"] },
+    },
+    {
+      sourceId: "framework-invoice",
+      reasoning: "Confirming the contract price and the four-way verdict",
+      title: "Four-way match — adding the contract · verdict",
+      matchGrid: {
+        columns: beltMatchColumns,
+        rows: beltMatchRows,
+        reveal: ["invoice", "po", "gr", "contract"],
+        verdict: "All four agree · variance USD 0.00 · contract −8% vs list · clean",
+      },
+    },
+    {
+      sourceId: "invoice-pdf",
+      reasoning: "Posting in MIRO — clearing GR/IR and booking the AP liability",
+      title: "General ledger — invoice posting (MIRO)",
+      fields: [
+        { label: "Dr · 191100 GR/IR clearing", value: "USD 48,200.00" },
+        { label: "Cr · 160000 Accounts payable", value: "USD 48,200.00" },
+        { label: "Document type", value: "RE · invoice receipt" },
+        { label: "Balance", value: "USD 0.00 · Dr = Cr" },
+      ],
+    },
+    {
+      sourceId: "framework-invoice",
+      reasoning: "Recommending the payment terms — read from the contract",
+      title: "AI recommendation — payment terms",
+      narrative:
+        "Contract 4600001207 fixes BeltPro at NT30 · Net 30 — not the Net 60/90 some suppliers push. I'm keeping Net 30: it honours the framework and there's no early-pay discount that would beat holding the cash. Baseline is the 2026-06-09 invoice date, so payment is due 2026-07-09; I've scheduled the F110 run for that date. Adjust any term or date below before you approve.",
+      fields: [
+        { label: "Recommended terms", value: "NT30 · Net 30", options: ["NT30 · Net 30", "NT45 · Net 45", "NT60 · Net 60", "NT90 · Net 90"] },
+        { label: "Per contract", value: "4600001207 · not Net 60/90" },
+        { label: "Baseline date", value: "2026-06-09", type: "date" },
+        { label: "Net due date", value: "2026-07-09", type: "date" },
+        { label: "Cash discount", value: "None · pay on the net date", options: ["None · pay on the net date", "2% 10 · net 30", "1% 15 · net 30"] },
+        { label: "Payment run (F110)", value: "2026-07-09", type: "date" },
+      ],
+    },
+  ],
 };
 
 export const runSteps: RunStep[] = [

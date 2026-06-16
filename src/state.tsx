@@ -1,5 +1,5 @@
 /**
- * View-state machine for the IP Procure-to-Pay workforce demo.
+ * View-state machine for the Procure-to-Pay workforce demo.
  * Forked from the HR Concierge engine: no real router, just a typed `view`
  * field that App.tsx switches on. Single buyer persona for v1.
  */
@@ -132,12 +132,17 @@ const freshConfig = (): Record<AgentId, AgentConfig> =>
 
 const Ctx = React.createContext<(AppState & AppActions) | null>(null);
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
+export function AppProvider({
+  children,
+  initialView,
+  onExit,
+}: {
+  children: React.ReactNode;
+  initialView?: View;
+  onExit?: () => void;
+}) {
   const [state, setState] = React.useState<AppState>({
-    // Demo lands directly on the cockpit (login is bypassed on first load;
-    // the state is already initialised as if signed in). Sign out still
-    // returns to the login screen.
-    view: { kind: "cockpit" },
+    view: initialView ?? { kind: "login" },
     history: [],
     flowProgress: freshProgress(),
     agentOutputs: freshOutputs(),
@@ -179,15 +184,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const signOut = React.useCallback(
-    () =>
-      setState((s) => ({
-        ...s,
-        view: { kind: "login" },
-        history: [],
-      })),
-    [],
-  );
+  const signOut = React.useCallback(() => {
+    if (onExit) {
+      onExit();
+      return;
+    }
+    setState((s) => ({ ...s, view: { kind: "login" }, history: [] }));
+  }, [onExit]);
 
   const setFlowProgress = React.useCallback(
     (flow: FlowId, next: Partial<FlowProgress>) =>

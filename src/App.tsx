@@ -11,12 +11,12 @@ import { InvoiceConsole } from "@/views/InvoiceConsole";
 import { VendorConsole } from "@/views/VendorConsole";
 import { OrchestratorConsole } from "@/views/OrchestratorConsole";
 
-function Router() {
+function Router({ onExit }: { onExit?: () => void }) {
   const { view } = useApp();
 
   switch (view.kind) {
     case "login":
-      return <Login />;
+      return <Login onExit={onExit} />;
     case "cockpit":
       return <Cockpit />;
     case "workspace":
@@ -41,7 +41,7 @@ function Router() {
   }
 }
 
-function Shell() {
+function Shell({ onExit }: { onExit?: () => void }) {
   const { view } = useApp();
   // The work menu stays docked on every signed-in surface; login is full-screen.
   const showSidebar = view.kind !== "login";
@@ -51,17 +51,23 @@ function Shell() {
       <div className="flex">
         {showSidebar && <Sidebar />}
         <main className="flex-1 min-w-0">
-          <Router />
+          <Router onExit={onExit} />
         </main>
       </div>
     </div>
   );
 }
 
-export default function App() {
+export default function App({
+  onExit,
+  startSignedIn,
+}: {
+  onExit?: () => void;
+  startSignedIn?: boolean;
+}) {
   return (
-    <AppProvider>
-      <Shell />
+    <AppProvider initialView={startSignedIn ? { kind: "cockpit" } : undefined} onExit={onExit}>
+      <Shell onExit={onExit} />
     </AppProvider>
   );
 }

@@ -50,6 +50,20 @@ export type FlowRun = {
     routedSub: string;
     stats: { value: string; label: string }[];
     caption: string;
+    /**
+     * When present, the happy-path close shows the payment-scheduled success
+     * card (animated) instead of the generic flow-complete modal — the F110
+     * schedule the Invoice agent just booked.
+     */
+    paymentSchedule?: {
+      vendor: string;
+      amount: string;
+      terms: string;
+      method: string;
+      reference: string;
+      /** Three points on the pay timeline — posted → due → run. */
+      timeline: { label: string; date: string; done: boolean }[];
+    };
   };
 };
 
@@ -68,7 +82,7 @@ const prPump: SapPR = {
   releaseStrategy: "MRO2 — held · off-contract and above the $50k MRO ceiling",
   createdBy: "Intake Agent",
   createdOn: "2026-06-03 · 10:46",
-  purchasingOrg: "IP01 · IP North America",
+  purchasingOrg: "NG01 · Northgate North America",
   purchasingGroup: "P14 · Rotating equipment",
   headerNote:
     "Boiler feed pump on Power House Unit 1 failed inspection — replacement needed inside the week. No active framework agreement covers rotating-equipment pumps, and the value sits above the maintenance-spend ceiling, so the requisition is drafted and routed for buyer approval.",
@@ -144,9 +158,9 @@ const poPump: SapPO = {
   createdBy: "Purchase Order Agent",
   vendor: "200914",
   vendorName: "Cascade Fluid Systems",
-  purchasingOrg: "IP01 · IP North America",
+  purchasingOrg: "NG01 · Northgate North America",
   purchasingGroup: "P14 · Rotating equipment",
-  companyCode: "1000 · International Paper Co.",
+  companyCode: "1000 · Northgate Paper Co.",
   paymentTerms: "NT30 · Net 30 days",
   incoterms: "FCA · Cascade Houston DC",
   currency: "USD",
@@ -185,7 +199,7 @@ const poPump: SapPO = {
 const pumpNote = (
   <EmailDoc
     from="T. Okafor"
-    fromAddr="tokafor@ipaper.com"
+    fromAddr="tokafor@northgatepaper.com"
     to="Procurement Intake"
     sent="2026-06-03 · 10:32"
     subject="Boiler feed pump failed inspection — Power House Unit 1"
@@ -199,7 +213,7 @@ const pumpNote = (
 const pumpDecline = (
   <EmailDoc
     from="Tactical Sourcing Agent"
-    fromAddr="sourcing@ipaper.com"
+    fromAddr="sourcing@northgatepaper.com"
     to="Buyer · Rotating equipment"
     sent="2026-06-03 · 13:18"
     subject="RFQ-6600-2390 — two suppliers declined to quote"
@@ -401,9 +415,9 @@ const poGearbox: SapPO = {
   createdBy: "Purchase Order Agent",
   vendor: "201185",
   vendorName: "Apex Drive Systems",
-  purchasingOrg: "IP01 · IP North America",
+  purchasingOrg: "NG01 · Northgate North America",
   purchasingGroup: "P13 · Power transmission",
-  companyCode: "1000 · International Paper Co.",
+  companyCode: "1000 · Northgate Paper Co.",
   paymentTerms: "NT30 · Net 30 days",
   incoterms: "FCA · Apex Houston DC",
   currency: "USD",
@@ -657,7 +671,7 @@ const collectCustomerNote = (
   <EmailDoc
     from="BlueRidge Foods · Accounts Payable"
     fromAddr="ap@blueridgefoods.com"
-    to="International Paper · Collections"
+    to="Northgate Paper · Collections"
     sent="2026-05-22 · 14:10"
     subject="RE: Reminder — invoice INV-90357"
     tone="inbound"
@@ -672,7 +686,7 @@ const collectPoEmail = (
   <EmailDoc
     from="BlueRidge Foods · Procurement"
     fromAddr="orders@blueridgefoods.com"
-    to="International Paper · Order Management"
+    to="Northgate Paper · Order Management"
     sent="2026-03-27 · 15:48"
     subject="Purchase order BRF-PO-7741 — containerboard, 320 MT"
     tone="inbound"
@@ -686,7 +700,7 @@ const collectPoEmail = (
 const collectCreditNote = (
   <EmailDoc
     from="Credit Management Agent"
-    fromAddr="credit@ipaper.com"
+    fromAddr="credit@northgatepaper.com"
     to="Order Management"
     sent="2026-03-28 · 09:55"
     subject="Credit check — BlueRidge Foods Co. (0000610248)"
@@ -702,7 +716,7 @@ const collectShipNote = (
   <EmailDoc
     from="Ironwood Freight Lines"
     fromAddr="dispatch@ironwoodfreight.com"
-    to="IP Fulfillment"
+    to="Northgate Fulfillment"
     sent="2026-04-01 · 09:20"
     subject="BOL IWF-2026-44718 — SO-58841 picked up"
     tone="inbound"
@@ -970,6 +984,18 @@ export const flowRuns: Record<FlowId, FlowRun> = {
       ],
       caption:
         "Posted to SAP · payment released to AP on net 30 · audit envelope closed with every artifact attached · 0 exceptions.",
+      paymentSchedule: {
+        vendor: "BeltPro Industrial · 100482",
+        amount: "USD 48,200.00",
+        terms: "NT30 · Net 30 · per contract 4600001207",
+        method: "F110 payment run · bank ACH",
+        reference: "INV-BPI-5567 · PO-77310",
+        timeline: [
+          { label: "Invoice posted", date: "2026-06-09", done: true },
+          { label: "Net due", date: "2026-07-09", done: false },
+          { label: "F110 payment run", date: "2026-07-09", done: false },
+        ],
+      },
     },
   },
   pump: {

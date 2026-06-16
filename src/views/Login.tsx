@@ -33,13 +33,22 @@ const PERSONA = {
   userId: "buyer01",
 };
 
-export function Login() {
+export function Login({ onExit }: { onExit?: () => void }) {
   const { signIn } = useApp();
   const [phase, setPhase] = useState<"hero" | "personas">("hero");
 
   return (
     <div className="fixed inset-0 overflow-auto bg-neutral-950 text-white">
       <HeroBackground heavyOverlay={phase === "personas"} />
+      {onExit && (
+        <button
+          type="button"
+          onClick={onExit}
+          className="absolute top-4 left-1/2 z-30 -translate-x-1/2 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.06] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/75 backdrop-blur transition-colors hover:border-teal-400 hover:text-teal-300"
+        >
+          <ArrowLeft size={13} /> All workforces
+        </button>
+      )}
 
       <div className="relative min-h-screen flex flex-col">
         <TopBar phase={phase} onSelect={() => setPhase("personas")} onBack={() => setPhase("hero")} />

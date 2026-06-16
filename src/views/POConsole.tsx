@@ -293,9 +293,6 @@ function ExpeditingPanel() {
             { header: "Delivery", align: "right", cell: (e) => <CellTag tone={toneTag[e.tone]}>{e.due}</CellTag> },
           ]}
         />
-        <p className="text-[12px] text-mute leading-snug mt-3">
-          Auto-chasing holds supplier on-time delivery at 88% — up from 71% before the agent took over expediting.
-        </p>
       </div>
     </article>
   );

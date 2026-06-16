@@ -3,6 +3,9 @@ import { Check, CornerUpRight, RotateCcw, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ai/Spinner";
 import { SpringIn } from "@/components/ai/SpringIn";
+import { StreamingText } from "@/components/ai/StreamingText";
+import { SourceLogo } from "@/components/brand/SourceLogo";
+import { FourWayMatchGrid } from "@/components/workspace/FourWayMatchGrid";
 import type { ExtractStage, SourceArtifact } from "@/data/runSteps";
 
 /**
@@ -21,28 +24,62 @@ function EditableField({
   label,
   value,
   hot,
+  options,
+  type,
   onChange,
 }: {
   label: string;
   value: string;
   hot: boolean;
+  options?: string[];
+  type?: "date";
   onChange: (v: string) => void;
 }) {
+  const fieldClass = cn(
+    "w-full rounded px-2.5 py-1.5 text-[12.5px] text-ink transition-all duration-300 focus:outline-none focus:border-[#0a6ed1] focus:bg-white",
+    hot
+      ? "bg-surface-mint/50 border border-surface-deep/55 ring-2 ring-surface-deep/20"
+      : "bg-[#f4f6f9] border border-[#dfe3e8]",
+  );
   return (
     <label className="block min-w-0">
       <span className="block text-[10px] uppercase tracking-[0.06em] text-mute font-medium mb-1">
         {label}
       </span>
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={cn(
-          "w-full rounded px-2.5 py-1.5 text-[12.5px] text-ink transition-all duration-300 focus:outline-none focus:border-[#0a6ed1] focus:bg-white",
-          hot
-            ? "bg-surface-mint/50 border border-surface-deep/55 ring-2 ring-surface-deep/20"
-            : "bg-[#f4f6f9] border border-[#dfe3e8]",
-        )}
-      />
+      {options ? (
+        // Dropdown — the agent's pick is pre-selected; the reviewer can switch
+        // it (e.g. Net 30 → Net 60). An empty value keeps the cell blank during
+        // the auto-fill beat, matching the text fields.
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn(fieldClass, "appearance-none bg-no-repeat pr-7 cursor-pointer", value ? "" : "text-mute")}
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")",
+            backgroundPosition: "right 0.55rem center",
+          }}
+        >
+          {!value && <option value="" />}
+          {[...new Set([value, ...options].filter(Boolean))].map((o) => (
+            <option key={o} value={o}>
+              {o}
+            </option>
+          ))}
+        </select>
+      ) : type === "date" ? (
+        // Date input — clicking opens the browser's native calendar so the
+        // reviewer can pick a different baseline / due / run date. The value is
+        // already ISO (YYYY-MM-DD); blank during the auto-fill beat.
+        <input
+          type="date"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn(fieldClass, "cursor-pointer [&::-webkit-calendar-picker-indicator]:cursor-pointer")}
+        />
+      ) : (
+        <input value={value} onChange={(e) => onChange(e.target.value)} className={fieldClass} />
+      )}
     </label>
   );
 }
@@ -57,7 +94,7 @@ export function ExtractionWizard({
   onComplete: () => void;
 }) {
   const [stageIdx, setStageIdx] = React.useState(0);
-  const [vals, setVals] = React.useState<string[]>(() => stages[0].fields.map(() => ""));
+  const [vals, setVals] = React.useState<string[]>(() => (stages[0].fields ?? []).map(() => ""));
   const [filled, setFilled] = React.useState(false);
   const [hot, setHot] = React.useState(-1);
   // Bumping this re-runs the empty → auto-fill animation (used by Discard).
@@ -65,11 +102,18 @@ export function ExtractionWizard({
 
   const stage = stages[stageIdx];
   const source = sources.find((s) => s.id === stage.sourceId);
+  const isMatch = !!stage.matchGrid;
 
   // On each stage (or re-extract): blank the box, wait a beat, then fill field
-  // by field. The active reasoning line keeps spinning throughout.
+  // by field. The active reasoning line keeps spinning throughout. Match-grid
+  // stages are driven by the grid itself (it reports back via onReady), so we
+  // just reset `filled` and let the grid take over.
   React.useEffect(() => {
-    const fields = stages[stageIdx].fields;
+    if (stages[stageIdx].matchGrid) {
+      setFilled(false);
+      return;
+    }
+    const fields = stages[stageIdx].fields ?? [];
     setFilled(false);
     setHot(-1);
     setVals(fields.map(() => ""));
@@ -122,7 +166,9 @@ export function ExtractionWizard({
           })}
         </div>
 
-        <SpringIn key={stageIdx}>
+        {/* The match-grid box keeps a stable key so it persists across the three
+            match stages — previous columns stay, the new one fills in. */}
+        <SpringIn key={isMatch ? "match-box" : stageIdx}>
           <div className="bg-white border border-divider rounded-md overflow-hidden">
             <div className="flex items-center gap-2 px-3.5 py-2 bg-[#eef1f5] border-b border-divider border-l-[3px] border-l-[#354a5f]">
               <Sparkles size={12} className="text-[#354a5f] shrink-0" />
@@ -131,25 +177,51 @@ export function ExtractionWizard({
               </span>
               <span className="ml-auto flex items-center gap-1.5 text-[10px] text-mute whitespace-nowrap">
                 {filled ? (
-                  "auto-filled · editable"
+                  isMatch ? "matched · editable" : "auto-filled · editable"
                 ) : (
                   <>
-                    <Spinner size={9} className="shrink-0" /> auto-filling…
+                    <Spinner size={9} className="shrink-0" /> {isMatch ? "matching…" : "auto-filling…"}
                   </>
                 )}
               </span>
             </div>
-            <div className="p-4 grid grid-cols-2 gap-x-3 gap-y-3">
-              {stage.fields.map((f, i) => (
-                <EditableField
-                  key={f.label}
-                  label={f.label}
-                  value={vals[i] ?? ""}
-                  hot={hot === i}
-                  onChange={(v) => setVals((arr) => arr.map((x, j) => (j === i ? v : x)))}
+            {stage.narrative && (
+              // The agent writes out its rationale in prose — typed character by
+              // character — before (and above) the values it recommends.
+              <div className="px-4 pt-3.5">
+                <div className="rounded-md bg-surface-mint/40 border border-surface-mint px-3 py-2.5 flex gap-2">
+                  <Sparkles size={13} className="text-surface-deep mt-[2px] shrink-0" />
+                  <p className="text-[12.5px] text-ink leading-relaxed min-h-[1.2em]">
+                    <StreamingText text={stage.narrative} cps={52} startDelay={350} />
+                  </p>
+                </div>
+              </div>
+            )}
+            {isMatch && stage.matchGrid ? (
+              <div className="p-4">
+                <FourWayMatchGrid
+                  grid={stage.matchGrid}
+                  reveal={stage.matchGrid.reveal}
+                  verdict={stage.matchGrid.verdict}
+                  replayKey={fillKey}
+                  onReady={() => setFilled(true)}
                 />
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div className="p-4 grid grid-cols-2 gap-x-3 gap-y-3">
+                {(stage.fields ?? []).map((f, i) => (
+                  <EditableField
+                    key={f.label}
+                    label={f.label}
+                    value={vals[i] ?? ""}
+                    hot={hot === i}
+                    options={f.options}
+                    type={f.type}
+                    onChange={(v) => setVals((arr) => arr.map((x, j) => (j === i ? v : x)))}
+                  />
+                ))}
+              </div>
+            )}
             <div className="px-4 py-3 border-t border-divider flex items-center gap-2">
               <button
                 type="button"
@@ -179,11 +251,14 @@ export function ExtractionWizard({
         {source && (
           <SpringIn key={stage.sourceId}>
             <div className="bg-white border border-divider rounded-md overflow-hidden">
-              <div className="px-3.5 py-2 border-b border-divider bg-surface-fog">
-                <div className="text-[12px] font-bold text-ink truncate">{source.label}</div>
-                <div className="text-[10.5px] uppercase tracking-[0.06em] text-mute truncate">
-                  {source.meta}
+              <div className="px-3.5 py-2 border-b border-divider bg-surface-fog flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[12px] font-bold text-ink truncate">{source.label}</div>
+                  <div className="text-[10.5px] uppercase tracking-[0.06em] text-mute truncate">
+                    {source.meta}
+                  </div>
                 </div>
+                <SourceLogo kind={source.kind} />
               </div>
               <div className="p-3 overflow-x-auto">{source.body}</div>
             </div>

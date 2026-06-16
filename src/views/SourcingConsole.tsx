@@ -262,9 +262,6 @@ function RfqHistoryPanel() {
             { header: "Outcome", cell: (h) => h.outcome },
           ]}
         />
-        <p className="text-[12px] text-mute leading-snug mt-3">
-          Awards this quarter closed an average 6.8% below the first quotes received.
-        </p>
       </div>
     </article>
   );
