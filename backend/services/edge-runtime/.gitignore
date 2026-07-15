@@ -1,0 +1,6 @@
+.env
+edge.db
+storage/
+.venv/
+__pycache__/
+*.pyc

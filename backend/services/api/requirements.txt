@@ -1,0 +1,7 @@
+# Control-plane API (Cloud Run). Talks to Firestore (Native mode); honours the
+# Firestore emulator via FIRESTORE_EMULATOR_HOST for local, zero-cost testing.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+google-cloud-firestore==2.20.0

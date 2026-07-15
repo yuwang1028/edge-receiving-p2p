@@ -1,0 +1,10 @@
+# P7 — classical pipeline (OCR + barcode). The Jetson-target extractor, no large
+# VLM. Install on top of requirements.txt:
+#   ./.venv/bin/pip install -r requirements-classical.txt
+# System dependency (not pip): the Tesseract binary —
+#   macOS:  brew install tesseract
+#   Jetson/Ubuntu:  apt-get install -y tesseract-ocr
+# YOLO damage detection (ultralytics/onnxruntime) is added with trained weights
+# during P7 training; until then the damage stage uses an OCR-caption fallback.
+pytesseract==0.3.13
+zxing-cpp==2.3.0

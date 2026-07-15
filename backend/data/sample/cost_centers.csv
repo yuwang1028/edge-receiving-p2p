@@ -1,0 +1,5 @@
+cost_center,description,plant,category
+10021,Heidelberg Production,Heidelberg,Chemicals
+10034,Heidelberg Maintenance,Heidelberg,MRO
+10052,Newark Production,Newark,Chemicals
+10061,Newark Maintenance,Newark,MRO

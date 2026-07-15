@@ -1,0 +1,46 @@
+{
+  "case_id": "forbo_damaged",
+  "tier": "hero",
+  "scenario": "damaged_goods",
+  "note": "synthetic \u2014 evidence rendered by gen_docs.py; gold values are the generator's ground truth.",
+  "po": {
+    "po_number": "45009349",
+    "supplier": "Forbo",
+    "material": "Flooring adhesive",
+    "expected_quantity": 40,
+    "unit": "cartons",
+    "unit_price": 402,
+    "plant": "Frankfurt",
+    "required_documents": [
+      "Packing list",
+      "CoA"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "packing_list",
+      "path": "backend/evals/assets/forbo_damaged/packing_list.png"
+    },
+    {
+      "kind": "damage",
+      "path": "backend/evals/assets/forbo_damaged/damage.png"
+    }
+  ],
+  "gold_extraction": {
+    "po_number": "45009349",
+    "supplier": "Forbo",
+    "material": "Flooring adhesive",
+    "detected_quantity": 40,
+    "unit": "cartons",
+    "lot_number": "LOT-2026-0677",
+    "documents_found": [
+      "Packing list",
+      "CoA"
+    ],
+    "documents_missing": [],
+    "damaged_cartons": 3
+  },
+  "gold_decision": {
+    "decision": "partial_receipt"
+  }
+}

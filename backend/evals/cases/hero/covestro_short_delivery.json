@@ -1,0 +1,42 @@
+{
+  "case_id": "covestro_short_delivery",
+  "tier": "hero",
+  "scenario": "short_delivery",
+  "note": "synthetic \u2014 evidence rendered by gen_docs.py; gold values are the generator's ground truth.",
+  "po": {
+    "po_number": "45009327",
+    "supplier": "Covestro",
+    "material": "Coating base",
+    "expected_quantity": 40,
+    "unit": "cartons",
+    "unit_price": 455,
+    "plant": "Leverkusen",
+    "required_documents": [
+      "Packing list",
+      "CoA"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "packing_list",
+      "path": "backend/evals/assets/covestro_short_delivery/packing_list.png"
+    }
+  ],
+  "gold_extraction": {
+    "po_number": "45009327",
+    "supplier": "Covestro",
+    "material": "Coating base",
+    "detected_quantity": 37,
+    "unit": "cartons",
+    "lot_number": "LOT-2026-0659",
+    "documents_found": [
+      "Packing list",
+      "CoA"
+    ],
+    "documents_missing": [],
+    "damaged_cartons": 0
+  },
+  "gold_decision": {
+    "decision": "partial_receipt"
+  }
+}

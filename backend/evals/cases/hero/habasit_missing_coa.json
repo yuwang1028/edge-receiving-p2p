@@ -1,0 +1,45 @@
+{
+  "case_id": "habasit_missing_coa",
+  "tier": "hero",
+  "scenario": "missing_coa",
+  "note": "synthetic \u2014 evidence rendered by gen_docs.py; gold values are the generator's ground truth.",
+  "po": {
+    "po_number": "45009338",
+    "supplier": "Habasit",
+    "material": "Conveyor belt",
+    "expected_quantity": 40,
+    "unit": "cartons",
+    "unit_price": 512,
+    "plant": "Reinach",
+    "required_documents": [
+      "Packing list",
+      "Batch certificate",
+      "CoA"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "packing_list",
+      "path": "backend/evals/assets/habasit_missing_coa/packing_list.png"
+    }
+  ],
+  "gold_extraction": {
+    "po_number": "45009338",
+    "supplier": "Habasit",
+    "material": "Conveyor belt",
+    "detected_quantity": 40,
+    "unit": "cartons",
+    "lot_number": "LOT-2026-0662",
+    "documents_found": [
+      "Packing list",
+      "Batch certificate"
+    ],
+    "documents_missing": [
+      "CoA"
+    ],
+    "damaged_cartons": 0
+  },
+  "gold_decision": {
+    "decision": "partial_receipt"
+  }
+}

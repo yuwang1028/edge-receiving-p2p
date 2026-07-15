@@ -1,0 +1,48 @@
+flowchart TB
+  classDef built fill:#d4f4dd,stroke:#2f8f4e,color:#0b3d1f
+  classDef planned fill:#eef1f5,stroke:#9aa6b2,color:#55606b,stroke-dasharray:5 3
+
+  subgraph CAP["Receiving dock - capture"]
+    EV["Packing list - carton label<br/>pallet - damage photo"]
+  end
+
+  subgraph EDGE["EDGE DEVICE (Jetson / local runtime) - runs fully offline"]
+    INF["Inference pipeline<br/>OCR - VLM extractor - damage detector - barcode"]
+    PROV["Extractor provider - swap by env<br/>mock to Vertex(boot) to local VLM to Jetson"]
+    POC[("Local PO cache<br/>SQLite")]
+    RULES["Rules engine (deterministic)<br/>qty - damage - missing docs - PO match - confidence"]
+    DEC["Recommended decision<br/>+ human approval"]
+    AUD[("Local audit store<br/>+ offline sync queue")]
+    INF --- PROV
+    EV --> INF --> RULES
+    POC --> RULES --> DEC --> AUD
+  end
+
+  subgraph UI["Frontends"]
+    OC["Operator console - dashboard, approval, audit"]
+    KIOSK["Edge kiosk - on-device touchscreen"]
+  end
+  OC <--> DEC
+  KIOSK <--> DEC
+
+  AUD -. "structured events + hashes (only when online)" .-> API
+
+  subgraph CLOUD["GCP control plane - governance (OPTIONAL path)"]
+    API["Cloud Run: control-plane-api<br/>POST /edge/events"]
+    FS[("Firestore<br/>cases - decisions - audit_events - devices")]
+    GCS[("Cloud Storage<br/>audit packages")]
+    SW["Pub/Sub to sync-worker"]
+    VX["Vertex AI worker - OFF main path<br/>summary - rationale - supplier email - policy QA"]
+    API --> FS
+    API --> GCS
+    API --> SW --> FS
+    VX -.-> FS
+  end
+
+  subgraph ERP["ERP / WMS connectors (mock first)"]
+    SAP["SAP MM - Oracle - Coupa - WMS<br/>goods receipt - quality hold - invoice hold"]
+  end
+  API -. "approved events" .-> SAP
+
+  class EV,INF,PROV,POC,RULES,DEC,AUD,OC built
+  class KIOSK,API,FS,GCS,SW,VX,SAP planned

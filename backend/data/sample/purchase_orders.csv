@@ -1,0 +1,3 @@
+po_number,supplier,material,expected_quantity,unit,unit_price,plant,required_documents
+45009281,BASF,Resin additive,40,cartons,421.0,Heidelberg,Packing list;Batch certificate;CoA
+45009282,Mitsui Chemicals,Polymer compound,120,bags,88.0,Newark,Packing list;CoA

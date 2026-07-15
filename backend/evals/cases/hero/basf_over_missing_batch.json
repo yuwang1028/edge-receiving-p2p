@@ -1,0 +1,41 @@
+{
+  "case_id": "basf_over_missing_batch",
+  "tier": "hero",
+  "scenario": "over_delivery_missing_batch",
+  "note": "The reference exception: BASF · Heidelberg · PO 45009281. 40 ordered, 42 received (over by 2), 2 damaged cartons, Batch certificate not in the box. Real evidence images; gold values are the TRUE facts of the synthetic docs, not any model's output.",
+  "po": {
+    "po_number": "45009281",
+    "supplier": "BASF",
+    "material": "Resin additive",
+    "expected_quantity": 40,
+    "unit": "cartons",
+    "unit_price": 421,
+    "plant": "Heidelberg",
+    "required_documents": ["Packing list", "Batch certificate", "CoA"]
+  },
+  "evidence": [
+    { "kind": "packing_list", "path": "backend/data/evidence/packing_lists/basf_packing_list_45009281.png" },
+    { "kind": "carton_label", "path": "backend/data/evidence/carton_labels/basf_carton_label_45009281.png" },
+    { "kind": "damage", "path": "backend/data/evidence/damage_photos/damaged.png" }
+  ],
+  "gold_extraction": {
+    "po_number": "45009281",
+    "supplier": "BASF",
+    "material": "Resin additive",
+    "detected_quantity": 42,
+    "unit": "cartons",
+    "lot_number": "LOT-2026-0617",
+    "documents_found": ["Packing list", "CoA"],
+    "documents_missing": ["Batch certificate"],
+    "damaged_cartons": 2
+  },
+  "gold_decision": {
+    "decision": "partial_receipt",
+    "qualityHold": true,
+    "invoiceHold": true
+  },
+  "gold_invoice_resolution": {
+    "payable_amount": 16840,
+    "blocked_amount": 842
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "case_id": "basf_clean",
+  "tier": "hero",
+  "scenario": "clean_receipt",
+  "note": "synthetic \u2014 evidence rendered by gen_docs.py; gold values are the generator's ground truth.",
+  "po": {
+    "po_number": "45009301",
+    "supplier": "BASF",
+    "material": "Resin additive",
+    "expected_quantity": 40,
+    "unit": "cartons",
+    "unit_price": 421,
+    "plant": "Heidelberg",
+    "required_documents": [
+      "Packing list",
+      "Batch certificate",
+      "CoA"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "packing_list",
+      "path": "backend/evals/assets/basf_clean/packing_list.png"
+    }
+  ],
+  "gold_extraction": {
+    "po_number": "45009301",
+    "supplier": "BASF",
+    "material": "Resin additive",
+    "detected_quantity": 40,
+    "unit": "cartons",
+    "lot_number": "LOT-2026-0631",
+    "documents_found": [
+      "Packing list",
+      "Batch certificate",
+      "CoA"
+    ],
+    "documents_missing": [],
+    "damaged_cartons": 0
+  },
+  "gold_decision": {
+    "decision": "accept"
+  }
+}

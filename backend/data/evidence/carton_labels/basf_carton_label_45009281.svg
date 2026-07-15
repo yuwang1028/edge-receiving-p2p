@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="600" viewBox="0 0 820 600" font-family="Helvetica, Arial, sans-serif">
+  <rect width="820" height="600" fill="#cfd4cd"/>
+  <rect x="40" y="36" width="740" height="528" rx="10" fill="#fcfbf6" stroke="#222" stroke-width="3"/>
+
+  <rect x="40" y="36" width="740" height="78" rx="10" fill="#111"/>
+  <rect x="40" y="78" width="740" height="36" fill="#111"/>
+  <text x="66" y="90" fill="#fff" font-size="34" font-weight="bold" letter-spacing="2">BASF</text>
+  <text x="762" y="74" fill="#fff" font-size="15" text-anchor="end" font-weight="bold">SHIPPING MARKS</text>
+  <text x="762" y="98" fill="#9fb0a3" font-size="14" text-anchor="end">箱 唛</text>
+
+  <text x="66" y="160" fill="#111" font-size="26" font-weight="bold">Resin additive</text>
+  <text x="66" y="186" fill="#555" font-size="15">RES-ADD-220 · Polymer resin additive · 25 kg/carton</text>
+
+  <g font-size="13">
+    <line x1="66" y1="206" x2="754" y2="206" stroke="#ddd"/>
+    <text x="66"  y="236" fill="#888" font-size="10.5">PO NUMBER</text>
+    <text x="66"  y="258" fill="#111" font-size="18" font-weight="bold">45009281</text>
+    <text x="300" y="236" fill="#888" font-size="10.5">LOT</text>
+    <text x="300" y="258" fill="#111" font-size="18" font-weight="bold">LOT-2026-0617</text>
+    <text x="560" y="236" fill="#888" font-size="10.5">ORIGIN</text>
+    <text x="560" y="258" fill="#111" font-size="16" font-weight="bold">Made in Germany</text>
+
+    <text x="66"  y="298" fill="#888" font-size="10.5">NET / CARTON</text>
+    <text x="66"  y="320" fill="#111" font-size="16" font-weight="bold">25.0 kg</text>
+    <text x="300" y="298" fill="#888" font-size="10.5">GROSS / CARTON</text>
+    <text x="300" y="320" fill="#111" font-size="16" font-weight="bold">26.4 kg</text>
+    <text x="560" y="298" fill="#888" font-size="10.5">SHIP TO</text>
+    <text x="560" y="320" fill="#111" font-size="16" font-weight="bold">Heidelberg · Dock 3</text>
+  </g>
+
+  <rect x="66" y="346" width="220" height="74" rx="6" fill="#111"/>
+  <text x="86" y="378" fill="#9fb0a3" font-size="12">CARTON</text>
+  <text x="86" y="408" fill="#fff" font-size="30" font-weight="bold">42 / 42</text>
+
+  <text x="320" y="372" fill="#111" font-size="13" font-weight="bold">THIS WAY UP  ·  KEEP DRY  ·  FRAGILE</text>
+  <text x="320" y="398" fill="#555" font-size="12">UN3082 · Environmentally hazardous</text>
+  <text x="320" y="416" fill="#555" font-size="12">Store 5–30°C · stack max 3</text>
+
+  <g fill="#111">
+    <rect x="66" y="452" width="3" height="70"/><rect x="72" y="452" width="6" height="70"/>
+    <rect x="82" y="452" width="2" height="70"/><rect x="88" y="452" width="5" height="70"/>
+    <rect x="97" y="452" width="3" height="70"/><rect x="104" y="452" width="7" height="70"/>
+    <rect x="115" y="452" width="2" height="70"/><rect x="121" y="452" width="4" height="70"/>
+    <rect x="129" y="452" width="6" height="70"/><rect x="139" y="452" width="2" height="70"/>
+    <rect x="145" y="452" width="5" height="70"/><rect x="154" y="452" width="3" height="70"/>
+    <rect x="161" y="452" width="7" height="70"/><rect x="172" y="452" width="2" height="70"/>
+    <rect x="178" y="452" width="4" height="70"/><rect x="186" y="452" width="6" height="70"/>
+    <rect x="196" y="452" width="3" height="70"/><rect x="203" y="452" width="2" height="70"/>
+    <rect x="209" y="452" width="5" height="70"/><rect x="218" y="452" width="7" height="70"/>
+    <rect x="229" y="452" width="2" height="70"/><rect x="235" y="452" width="4" height="70"/>
+    <rect x="243" y="452" width="6" height="70"/><rect x="253" y="452" width="3" height="70"/>
+    <rect x="260" y="452" width="5" height="70"/><rect x="269" y="452" width="2" height="70"/>
+    <rect x="275" y="452" width="7" height="70"/><rect x="286" y="452" width="3" height="70"/>
+    <rect x="293" y="452" width="4" height="70"/><rect x="301" y="452" width="6" height="70"/>
+  </g>
+  <text x="66" y="540" fill="#111" font-size="13" letter-spacing="3" font-weight="bold">4 5009281 000042</text>
+  <text x="754" y="540" fill="#9aa39b" font-size="10" text-anchor="end">Demo evidence · matches PO 45009281</text>
+</svg>

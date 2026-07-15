@@ -1,0 +1,6 @@
+supplier,category,quote_price,lead_days,risk,contracted
+BASF,Chemicals,421.0,7,low,yes
+Mitsui Chemicals,Chemicals,432.0,10,low,no
+Covestro,Chemicals,445.0,9,medium,no
+Habasit,MRO,48200.0,21,low,yes
+Forbo,MRO,49600.0,18,medium,no

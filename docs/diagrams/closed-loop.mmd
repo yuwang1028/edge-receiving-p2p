@@ -1,0 +1,7 @@
+flowchart LR
+  A["1 - Capture evidence<br/>local + hashed"] --> B["2 - Extract fields<br/>on-device AI"]
+  B --> C["3 - Match purchase order<br/>local PO cache"]
+  C --> D["4 - Evaluate receiving risk<br/>rules engine"]
+  D --> E["5 - Human approval"]
+  E --> F["6 - Execute actions<br/>GR - quality hold - invoice hold"]
+  F --> G["7 - Audit package<br/>+ queue sync event"]

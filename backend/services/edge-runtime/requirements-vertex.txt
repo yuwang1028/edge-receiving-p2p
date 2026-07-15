@@ -1,0 +1,7 @@
+# P3 — Vertex AI Gemini extractor (optional). Install on top of requirements.txt:
+#   ./.venv/bin/pip install -r requirements-vertex.txt
+# Then authenticate and switch the provider:
+#   gcloud auth application-default login
+#   export GCP_PROJECT=your-project   GCP_LOCATION=us-central1   INFER_PROVIDER=vertex
+# google-genai is the unified SDK; it talks to Vertex with vertexai=True.
+google-genai>=1.0.0

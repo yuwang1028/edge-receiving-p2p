@@ -1,0 +1,42 @@
+{
+  "case_id": "mitsui_over_delivery",
+  "tier": "hero",
+  "scenario": "over_delivery",
+  "note": "synthetic \u2014 evidence rendered by gen_docs.py; gold values are the generator's ground truth.",
+  "po": {
+    "po_number": "45009312",
+    "supplier": "Mitsui Chemicals",
+    "material": "Polymer granulate",
+    "expected_quantity": 40,
+    "unit": "cartons",
+    "unit_price": 388,
+    "plant": "Ludwigshafen",
+    "required_documents": [
+      "Packing list",
+      "CoA"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "packing_list",
+      "path": "backend/evals/assets/mitsui_over_delivery/packing_list.png"
+    }
+  ],
+  "gold_extraction": {
+    "po_number": "45009312",
+    "supplier": "Mitsui Chemicals",
+    "material": "Polymer granulate",
+    "detected_quantity": 43,
+    "unit": "cartons",
+    "lot_number": "LOT-2026-0644",
+    "documents_found": [
+      "Packing list",
+      "CoA"
+    ],
+    "documents_missing": [],
+    "damaged_cartons": 0
+  },
+  "gold_decision": {
+    "decision": "partial_receipt"
+  }
+}

@@ -1,0 +1,10 @@
+# YOLO dataset config for the carton-damage detector (ultralytics format).
+# Put labelled images/labels under images/ and labels/ (YOLO txt format).
+path: .
+train: images/train
+val: images/val
+names:
+  0: damaged_carton     # crushed / dented
+  1: torn_packaging
+  2: wet_package
+  3: collapsed_pallet

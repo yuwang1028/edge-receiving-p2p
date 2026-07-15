@@ -1,0 +1,49 @@
+# Inference strategy for the edge evidence-understanding layer.
+#
+# PRINCIPLE: the model(s) EXTRACT evidence only. The rules engine + human make
+# the business decision. No model decides whether to receive goods or hold an
+# invoice.
+#
+# The runtime currently selects a single provider via the INFER_PROVIDER env var
+# (mock | vertex | local). `classical_pipeline` and `tensorrt` are the Jetson/
+# production direction (P7) and are documented here as the target strategy.
+
+active_provider: classical    # mirrors INFER_PROVIDER (mock | vertex | local | classical)
+
+providers:
+
+  mock:                       # zero-deps canned result — dev/demo, offline
+    status: built
+
+  vertex:                     # Vertex AI Gemini multimodal — cloud bootstrap
+    status: built
+    model: gemini-2.5-flash
+    escalation_model: gemini-2.5-pro      # used when confidence < threshold
+    location: us-central1
+
+  local:                      # on-device VLM via Ollama — available, NOT preferred
+    status: built
+    base_url: http://localhost:11434
+    model: llama3.2-vision:11b            # MUST be a vision model
+    note: >
+      Tested but NOT the chosen offline route: 11B is heavy/slow (~19s) and was
+      less accurate (missed damage, inverted the document checklist). Kept only as
+      an optional small-VLM fallback. Use `classical` below for offline.
+
+  classical:                  # CHOSEN offline route + Jetson target — OCR + barcode + damage
+    status: built             # ocr+barcode done; YOLO damage = OCR-caption fallback until trained
+    stages:
+      ocr: tesseract          # PO / quantity / lot / supplier / document checklist
+      barcode: zxing-cpp      # carton/shipment IDs (best-effort)
+      damage_detector: yolo   # YOLOv8n/v11n on Jetson; OCR-caption fallback until weights exist
+      document_classifier: line-based OCR parse
+    verified: "0.9s, fully local, no VLM; matches Gemini's result on the hero case"
+
+  tensorrt:                   # optimized engines for Jetson (P7+)
+    status: planned
+    damage_model_engine: runtime/models/damage_yolo/model.engine
+    note: ONNX export -> TensorRT engine (INT8/FP16), native C++ runtime.
+
+# Confidence below this routes to the escalation model (vertex) or to a human
+# (the rules engine's low_confidence rule). Shared with CONFIDENCE_THRESHOLD.
+confidence_threshold: 0.85
